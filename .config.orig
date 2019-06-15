@@ -1,0 +1,4 @@
+BUILDDIR=/dev/shm/$(NAME)
+FSMFLAGS=
+HOST=localhost
+PORT=6379

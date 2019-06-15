@@ -1,0 +1,60 @@
+#+STARTUP: indent
+
+* 基本框架
+#+begin_src ponylang :tangle ${BUILDDIR}/tester.pony
+  use "ponytest"
+  use "logger"
+
+  actor Main is TestList
+    new create(env: Env) =>
+      PonyTest(env, this)
+
+    new make() =>
+      None
+
+    fun tag tests(test: PonyTest) =>
+      test(_TestKey)
+
+  <<key>>
+#+end_src
+
+* 键值相关
+#+begin_src ponylang :noweb-ref key
+  class iso _TestKey is UnitTest
+      var redis: (Redis | None) = None
+
+      fun name(): String => "key"
+
+      fun ref set_up(h: TestHelper)? =>
+          redis = Redis(h.env.root as AmbientAuth, StringLogger(Info, h.env.out))
+          match redis
+          | let redis': Redis => redis'.connect("${HOST}", "${PORT}")
+          end
+
+      fun ref tear_down(h: TestHelper) =>
+          match redis
+          | let redis': Redis => redis'.dispose()
+          end
+
+      fun apply(h: TestHelper) =>
+          match redis
+          | let redis': Redis =>
+              h.long_test(2_000_000_000)
+              h.expect_action("OK")
+              redis'.set("key", "value").next[None]({(sn: (String | None)) =>
+                  match sn
+                  | let s: String => h.complete_action(s)
+                  | None => h.complete(false)
+                  end
+              })
+              h.expect_action("value")
+              redis'.get("key").next[None]({(sn: (String | None)) =>
+                  match sn
+                  | let s: String => h.complete_action(s)
+                  | None => h.complete(false)
+                  end
+              })
+          else
+              h.fail("Redis not connected")
+          end
+#+end_src
