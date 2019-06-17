@@ -1,4 +1,4 @@
-BUILDDIR=/dev/shm/$(NAME)
+BUILDDIR=/dev/shm/pony-$(NAME)/$(NAME)
 FSMFLAGS=
 HOST=localhost
 PORT=6379

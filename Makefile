@@ -28,7 +28,7 @@ $(TEST): %.pony: %.org
 test: $(TARGET)
 
 $(TARGET): $(SRCS) $(FSMS) $(TEST)
-	cd $(BUILDDIR); ponyc; cd -
+	cd $(BUILDDIR); ponyc test; cd -
 
 clean:
 	rm -rf $(BUILDDIR)

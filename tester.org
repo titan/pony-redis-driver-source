@@ -1,9 +1,10 @@
 #+STARTUP: indent
 
 * 基本框架
-#+begin_src ponylang :tangle ${BUILDDIR}/tester.pony
+#+begin_src ponylang :tangle ${BUILDDIR}/test/main.pony
   use "ponytest"
   use "logger"
+  use ".."
 
   actor Main is TestList
     new create(env: Env) =>
